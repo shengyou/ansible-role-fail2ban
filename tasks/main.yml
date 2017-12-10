@@ -1,0 +1,83 @@
+---
+
+- name: install epel-release (CentOS)
+  yum:
+    name: epel-release
+    state: present
+    update_cache: yes
+  when: ansible_distribution == "CentOS"
+  tags:
+    - install
+
+- name: install fail2ban
+  package:
+    name: fail2ban
+    state: present
+    update_cache: yes
+  when: ansible_distribution == "Ubuntu" or ansible_distribution == "CentOS"
+  tags:
+    - install
+
+- name: setup fail2ban
+  block:
+    - name: set jail.local (default)
+      file:
+        src: /etc/fail2ban/jail.conf
+        path: /etc/fail2ban/jail.local
+        state: hard
+        group: root
+        owner: root
+        mode: 0644
+      when: custom_jail_conf is not defined
+
+    - name: set jail.local (custom)
+      copy:
+        src: "{{ custom_jail_conf }}"
+        backup: yes
+        dest: /etc/fail2ban/jail.local
+        group: root
+        owner: root
+        mode: 0644
+
+    - name: set filters (custom)
+      copy:
+        src: "{{ item.src }}/{{ item.filename }}"
+        backup: yes
+        dest: "/etc/fail2ban/filters.d/{{ item.filename }}"
+        group: root
+        owner: root
+        mode: 0644
+      with_items:
+        - "{{ custom_filters }}"
+      notify: restart_fail2ban
+      when: custom_filters is not defined
+
+    - name: set actions (custom)
+      copy:
+        src: "{{ item.src }}/{{ item.filename }}"
+        backup: yes
+        dest: "/etc/fail2ban/action.d/{{ item.filename }}"
+        group: root
+        owner: root
+        mode: 0644
+      with_items:
+        - "{{ custom_actions }}"
+      notify: restart_fail2ban
+      when: custom_actions is not defined
+
+    - name: set jails (custom)
+      copy:
+        src: "{{ item.src }}/{{ item.filename }}"
+        backup: yes
+        dest: "/etc/fail2ban/jail.d/{{ item.filename }}"
+        group: root
+        owner: root
+        mode: 0644
+      with_items:
+        - "{{ custom_jails }}"
+      notify: restart_fail2ban
+      when: custom_jails is not defined
+
+  become: yes
+  tags:
+    - setup
