@@ -1,20 +1,19 @@
 ---
 
-- name: install epel-release (CentOS)
-  yum:
-    name: epel-release
-    state: present
-    update_cache: yes
-  when: ansible_distribution == "CentOS"
-  tags:
-    - install
+- block:
+    - name: install epel-release (CentOS)
+      yum:
+        name: epel-release
+        state: present
+        update_cache: yes
+      when: ansible_distribution == "CentOS"
 
-- name: install fail2ban
-  package:
-    name: fail2ban
-    state: present
-    update_cache: yes
-  when: ansible_distribution == "Ubuntu" or ansible_distribution == "CentOS"
+    - name: install fail2ban
+      package:
+        name: fail2ban
+        state: present
+        update_cache: yes
+      when: ansible_distribution == "Ubuntu" or ansible_distribution == "CentOS"
   tags:
     - install
 
@@ -38,6 +37,7 @@
         group: root
         owner: root
         mode: 0644
+      when: custom_jail_conf is defined
 
     - name: set filters (custom)
       copy:
@@ -50,7 +50,7 @@
       with_items:
         - "{{ custom_filters }}"
       notify: restart_fail2ban
-      when: custom_filters is not defined
+      when: custom_filters is defined
 
     - name: set actions (custom)
       copy:
@@ -63,7 +63,7 @@
       with_items:
         - "{{ custom_actions }}"
       notify: restart_fail2ban
-      when: custom_actions is not defined
+      when: custom_actions is defined
 
     - name: set jails (custom)
       copy:
@@ -76,8 +76,7 @@
       with_items:
         - "{{ custom_jails }}"
       notify: restart_fail2ban
-      when: custom_jails is not defined
-
+      when: custom_jails is defined
   become: yes
   tags:
     - setup
