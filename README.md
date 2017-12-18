@@ -12,6 +12,10 @@ Requirements
 Role Variables
 --------------
 
+以下四種 Variables 非必填項目，想要設定客製的 fail2ban config 才需要設置。
+
+使用方式請參考範例。
+
 * custom_jail_conf
 * custom_filters
 * custom_actions
@@ -34,7 +38,7 @@ Example Playbook
 
   vars:
    - custom_jail_conf: /path/to/conf/filename
-   
+
    - custom_filters::
        - src: /path/to/filters
          filename: filter_filename.conf
