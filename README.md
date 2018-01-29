@@ -1,4 +1,4 @@
-Install fail2ban
+Install fail2ban [![Build Status](https://travis-ci.org/shengyou/ansible-role-fail2ban.svg?branch=master)](https://travis-ci.org/shengyou/ansible-role-fail2ban)
 =========
 
 安裝 fail2ban。
