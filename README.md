@@ -3,6 +3,10 @@ Install fail2ban [![Build Status](https://travis-ci.org/shengyou/ansible-role-fa
 
 安裝 fail2ban。
 
+* Ubuntu 14.04, 16.04
+* CentOS 6, 7
+
+
 Requirements
 ------------
 
