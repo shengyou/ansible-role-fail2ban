@@ -1,23 +1,6 @@
 ---
 
-- hosts: localhost
-  gather_facts: yes
-  become: yes
+- hosts: all
+
   roles:
-    - install_fail2ban
-
-- hosts: localhost
-  gather_facts: yes
-  become: yes
-
-  tasks:
-    - name: check fail2ban
-      stat:
-        path: /etc/fail2ban/jail.conf
-      register: check_fail2ban
-
-    - debug: msg="{{ ansible_hostname }} ({{ ansible_distribution }} {{ ansible_distribution_major_version }}) - install htop success !!"
-      when: check_fail2ban.stat.exists == true
-
-    - fail: msg="install fail2ban fail"
-      when: check_fail2ban.stat.exists == false
+    - role_under_test
